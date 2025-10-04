@@ -74,19 +74,13 @@ PID based control
 void Autonomous::turnTo(double rotation ){
     config.inertialSenor.reset();
     double error;
-    double normalizedRotation;
-        if(rotation >= 0){
-            normalizedRotation = rotation;
-        } else if( rotation < 0){
-            normalizedRotation = -rotation + 180;
-        }
     double currentHeading;
-    error = rotation - config.inertialSenor.get_heading();
+    error = rotation - utilities::wrapHeading(config.inertialSenor.get_heading());
         //gets absolute value of error and if its greater than tolerance, run PID
         while(fabs(error) > 1){
-            currentHeading = config.inertialSenor.get_heading();
-        error = normalizedRotation - currentHeading;
-            Autonomous::moveMotors(0, rotationPID.calculateRotation(currentHeading, normalizedRotation));
+            currentHeading = utilities::wrapHeading(config.inertialSenor.get_heading());
+        error = rotation - currentHeading;
+            Autonomous::moveMotors(0, rotationPID.calculateRotation(currentHeading, rotation));
             pros::delay(20);
         }  
 }

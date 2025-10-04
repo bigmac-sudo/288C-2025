@@ -12,7 +12,7 @@ class utilities{
     static double calculateGearing(double motorRotations);
     static double rad_to_inch(double rad);
     static double ticks_to_inch(float ticks);
-    
+    static double wrapHeading(double currentHeading);
     private:
 
 };

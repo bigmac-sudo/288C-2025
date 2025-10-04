@@ -45,3 +45,14 @@ return utilities::ticks_to_degrees(motorRotations)/gearRatio;
  double utilities::ticks_to_inch(float ticks){
     return ticks*oneTickis;
 }
+/*
+We have to wrap heading of the current robot heading to 
+(-180,180] because we realized that its hard to find the error of the 
+heading using its default wrapping
+*/
+double utilities::wrapHeading(double currentHeading){
+    if (currentHeading >= 180){
+        return currentHeading -= 360;
+    } 
+
+}
