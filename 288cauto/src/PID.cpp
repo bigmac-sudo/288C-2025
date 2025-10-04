@@ -22,6 +22,12 @@ PID::PID(signed char type){
         kd=2;
         ki= 0.2;
         kp =10;
+
+    } else if(type==2){ //rotation PID
+        kd=3;
+        kp=10;
+        ki = 0;
+    }
         error=0;
         pasterror = 0;
         derivative = 0;
@@ -30,18 +36,6 @@ PID::PID(signed char type){
         dt = 0.02;
         largeErrorRange =2;
         MaxAcceleration = 10; 
-    } else if(type==2){ //rotation PID
-        kd=3;
-        kp=10;
-        error=0;
-        pasterror = 0;
-        derivative = 0;
-        largeError = 2;
-        smallerror =0.1;
-        dt = 0.2;
-        largeErrorRange =2;
-        MaxAcceleration = 10; 
-    }
 }
 
 //Speed PID
@@ -68,13 +62,12 @@ double PID::calculateSpeed(double distance,double currentD){
 }
 
 double PID::calculateRotation(double currentHeading, float targetHeading){
-    //We don't want the heading to be above 180, we want [-180, 180]
-    if(currentHeading <= 180){
-        normalizedHeading = currentHeading;
-    } else if( currentHeading > 180){
-        normalizedHeading = currentHeading - 360;;
-    }
-    error = targetHeading - normalizedHeading;
+    // if(currentHeading <= 180){
+    //     normalizedHeading = currentHeading;
+    // } else if( currentHeading > 180){
+    //     normalizedHeading = currentHeading - 360;;
+    // }
+    error = targetHeading - currentHeading;
     derivative = (error-pasterror)/dt;
     pasterror = error;
 

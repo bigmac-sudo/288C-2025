@@ -18,16 +18,18 @@ float Autonomous::distanceV;
 Auton doesn't support odometry right now, just PID based driveForward(inch) or driveBackward(inch)
 and turnTo(deg)
 
-First iteration, theoretically supports reverse driving, e
+Written by Carter 9/26/25
+
+First iteration, theoretically supports reverse driving, 
 PID can be fine tuned in PID.cpp, read instructions for that. 
 
 */
  void Autonomous::moveMotors(double distancePID, double rotationVal1){
-    config.leftchassis.move(distancePID);
-    config.rightchassis.move(distancePID);
+    config.leftchassis.move(distancePID+rotationVal1);
+    config.rightchassis.move(distancePID-rotationVal1);
 }
 
-//its all relative to the current position right now
+//its all relative to the current position right now, only accepts inches
 void Autonomous::driveFor(float distance){
     //sets distance traveled
     double distanceTraveled=0;
@@ -37,7 +39,7 @@ void Autonomous::driveFor(float distance){
     while (config.inertialSenor.is_calibrating()){
         pros::delay(10);
     }
-    //If error is larger than .2, PID runs
+    //If error is larger than tolerance, PID runs
     while (fabs(error)> drivePID.smallerror){
         double avgdist = 
         // utilities::rad_to_inch(utilities::degrees_to_radian(
@@ -73,9 +75,9 @@ void Autonomous::turnTo(double rotation ){
     config.inertialSenor.reset();
     double error;
     double normalizedRotation;
-        if(rotation <= 0){
+        if(rotation >= 0){
             normalizedRotation = rotation;
-        } else if( rotation > 0){
+        } else if( rotation < 0){
             normalizedRotation = -rotation + 180;
         }
     double currentHeading;
@@ -83,9 +85,8 @@ void Autonomous::turnTo(double rotation ){
         //gets absolute value of error and if its greater than tolerance, run PID
         while(fabs(error) > 1){
             currentHeading = config.inertialSenor.get_heading();
-
         error = normalizedRotation - currentHeading;
-            Autonomous::moveMotors(0, rotationPID.calculateRotation(currentHeading, rotation));
+            Autonomous::moveMotors(0, rotationPID.calculateRotation(currentHeading, normalizedRotation));
             pros::delay(20);
         }  
 }
